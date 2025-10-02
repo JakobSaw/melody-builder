@@ -1,5 +1,5 @@
 import { Button, Flex } from "@chakra-ui/react";
-import type { ControlsProps } from "@/types";
+import type { ControlsProps, NoteGrid } from "@/types";
 import { useEffect, useRef } from "react";
 import { useMainContext } from "@/context/useMainContext";
 
@@ -32,6 +32,7 @@ const Controls: React.FC<ControlsProps> = ({
     const currentStepRef = useRef<number>(0); // For accurate tracking
     const chordTimelineRef = useRef<string[]>([]);
     const pitchRef = useRef<number>(1);
+    const gridRef = useRef<NoteGrid>(grid);
 
     const removeHighlightedClass = () => {
         const prevCells = document.querySelectorAll(
@@ -89,7 +90,7 @@ const Controls: React.FC<ControlsProps> = ({
             }
 
             for (let row = 0; row < pianoRoll.length; row++) {
-                if (grid[row][step]) {
+                if (gridRef.current[row][step]) {
                     scheduleBufferAtTime(
                         noteBuffers[pianoRoll[row]],
                         stepTime,
@@ -109,6 +110,12 @@ const Controls: React.FC<ControlsProps> = ({
             chordTimelineRef.current = chordTimeline;
         }
     }, [chordTimeline]);
+
+    useEffect(() => {
+        if (!gridRef.current) return;
+        gridRef.current = grid;
+    }, [grid]);
+
     useEffect(() => {
         if (pitch !== pitchRef.current) {
             pitchRef.current = pitch;
