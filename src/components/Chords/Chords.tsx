@@ -6,7 +6,7 @@ const Chords = () => {
     const { scaleChords } = useMainContext();
     return (
         <Box>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Chords
             </Heading>
             <Flex gap={4} align="center">

@@ -9,7 +9,7 @@ const MetronomeControl = () => {
         <Flex mt={10} gap={4}>
             <Button
                 variant="outline"
-                size="2xl"
+                size="md"
                 onClick={() => setIsMetronomeOn((prev) => !prev)}
                 disabled={isPlayingGlobal}
             >

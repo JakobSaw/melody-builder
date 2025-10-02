@@ -22,7 +22,7 @@ const KeySelector = () => {
 
     return (
         <Box>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Key
             </Heading>
             <Flex gap={4} align="center">
@@ -30,7 +30,7 @@ const KeySelector = () => {
                     <NativeSelect.Field
                         value={keyValue}
                         onChange={(e) => setKeyValue(e.target.value)}
-                        fontSize="2xl"
+                        fontSize="xl"
                         maxW="200px"
                         w="full"
                         border={`2px solid ${color}`}

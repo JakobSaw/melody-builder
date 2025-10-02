@@ -76,14 +76,14 @@ const ProjectManager = () => {
 
     return (
         <Box my="100px">
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Downloader & Uploader
             </Heading>
             <Flex gap={4} align="center">
                 <Button
                     colorScheme="teal"
                     variant="solid"
-                    size="2xl"
+                    size="md"
                     onClick={handleDownload}
                     disabled={isPlayingGlobal}
                 >
@@ -99,7 +99,7 @@ const ProjectManager = () => {
                 <Button
                     colorScheme="teal"
                     variant="solid"
-                    size="2xl"
+                    size="md"
                     onClick={() => inputRef.current?.click()}
                     disabled={isPlayingGlobal}
                 >

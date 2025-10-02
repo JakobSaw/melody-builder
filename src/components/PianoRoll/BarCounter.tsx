@@ -1,6 +1,6 @@
 // BarCounter.tsx
 import type { BarCounterProps } from "@/types";
-import { Box, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import { Plus, Minus } from "lucide-react";
 import { useMainContext } from "@/context/useMainContext";
 
@@ -9,23 +9,13 @@ const BarCounter: React.FC<BarCounterProps> = ({
     setBars,
     isPlaying,
 }) => {
-    const {
-        soundsAreLoading,
-        pianoRollMaxWidth,
-        uploading,
-        color,
-        colorHover,
-    } = useMainContext();
+    const { pianoRollMaxWidth, color, colorHover } = useMainContext();
     return (
         <Box mb="10">
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Number of Bars in Melody
             </Heading>
-            <Flex
-                justifyContent="space-between"
-                alignItems={"center"}
-                maxW={`${pianoRollMaxWidth}px`}
-            >
+            <Flex alignItems={"center"} maxW={`${pianoRollMaxWidth}px`}>
                 <Flex gap={4} align="center">
                     <Box
                         cursor={isPlaying ? "disabled" : "pointer"}
@@ -45,7 +35,7 @@ const BarCounter: React.FC<BarCounterProps> = ({
                     </Box>
                     <Heading
                         as="h3"
-                        size="2xl"
+                        size="xl"
                         userSelect="none"
                         width="40px"
                         textAlign="center"
@@ -71,17 +61,6 @@ const BarCounter: React.FC<BarCounterProps> = ({
                         <Plus />
                     </Box>
                 </Flex>
-                {soundsAreLoading || uploading ? (
-                    <Flex gap={2} justifyContent={"center"}>
-                        <Spinner />
-                        <Text fontSize={"18px"}>
-                            {soundsAreLoading ? "Samples" : "Melodies"} are
-                            loading
-                        </Text>
-                    </Flex>
-                ) : (
-                    <Box />
-                )}
             </Flex>
         </Box>
     );

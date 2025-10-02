@@ -77,6 +77,7 @@ interface InnerPianoRollProps {
     grid: NoteGrid;
     setGrid: (grid: NoteGrid) => void;
     isPlaying: boolean;
+    isScrolling: boolean;
 }
 
 interface PianoRollCellProps {

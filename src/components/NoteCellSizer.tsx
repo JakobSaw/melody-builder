@@ -6,14 +6,14 @@ const NoteCellSizer = () => {
 
     return (
         <Box mt={10}>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 PianoRoll Size
             </Heading>
             <Slider.Root
                 width="200px"
                 value={[noteCellSize]}
-                min={30}
-                max={80}
+                min={20}
+                max={70}
                 step={10}
                 cursor={"pointer"}
                 onValueChange={(details) => setNoteCellSize(details.value[0])}

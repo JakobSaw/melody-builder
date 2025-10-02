@@ -8,7 +8,7 @@ const ModeSelector = () => {
 
     return (
         <Box>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Mode
             </Heading>
             <Flex gap={4} align="center">
@@ -23,7 +23,7 @@ const ModeSelector = () => {
                                 setMode(e.target.value);
                             }
                         }}
-                        fontSize="2xl"
+                        fontSize="xl"
                         maxW="200px"
                         w="full"
                         border={`2px solid ${color}`}

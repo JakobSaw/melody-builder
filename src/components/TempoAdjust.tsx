@@ -8,13 +8,13 @@ const TempoAdjust = () => {
         useMainContext();
     return (
         <Box>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Tempo
             </Heading>
             <Flex gap={4} align="center">
                 <Box
                     cursor={isPlayingGlobal ? "disabled" : "pointer"}
-                    p="4"
+                    p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
                     onClick={() => {
@@ -37,7 +37,7 @@ const TempoAdjust = () => {
                     max={300}
                     width="100px"
                     textAlign="center"
-                    fontSize="2xl"
+                    fontSize="xl"
                     fontWeight="bold"
                     color={color}
                     bg="transparent"
@@ -49,7 +49,7 @@ const TempoAdjust = () => {
                 />
                 <Box
                     cursor={isPlayingGlobal ? "disabled" : "pointer"}
-                    p="4"
+                    p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
                     onClick={() => {

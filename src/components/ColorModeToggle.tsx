@@ -8,7 +8,7 @@ const ColorModeToggle = () => {
     const { toggleColorMode, colorMode } = useColorMode();
     return (
         <Box mb="100px">
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Color Mode
             </Heading>
             <Button variant="outline" onClick={toggleColorMode}>

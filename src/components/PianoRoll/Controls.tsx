@@ -141,16 +141,16 @@ const Controls: React.FC<ControlsProps> = ({
         <Flex mt={10} gap={4}>
             <Button
                 variant="solid"
-                size="2xl"
+                size="md"
                 minWidth={"200px"}
                 onClick={isPlaying ? stopLoop : startLoop}
             >
                 {isPlaying ? "Stop" : "Start"}
             </Button>
-            <Button size="2xl" variant="outline" onClick={clearGrid}>
+            <Button size="md" variant="outline" onClick={clearGrid}>
                 Clear
             </Button>
-            <Button size="2xl" variant="outline" onClick={deleteMelody}>
+            <Button size="md" variant="outline" onClick={deleteMelody}>
                 Delete Melody
             </Button>
         </Flex>

@@ -3,11 +3,18 @@ import type { PianoRollCellProps } from "@/types";
 import { Box } from "@chakra-ui/react";
 import { memo, type FC } from "react";
 import { useColorMode } from "../ui/color-mode";
+import { getNote } from "@/utils";
 
 const PianoRollCell: FC<PianoRollCellProps> = memo(
     ({ cellIndex, numberOfNotesInMelody, grid, setGrid, isPlaying }) => {
-        const { pianoRoll, notesPerBar, scaleNotes, audioCtxRef, noteBuffers } =
-            useMainContext();
+        const {
+            pianoRoll,
+            notesPerBar,
+            scaleNotes,
+            audioCtxRef,
+            noteBuffers,
+            mode,
+        } = useMainContext();
 
         const { colorMode } = useColorMode();
 
@@ -49,17 +56,9 @@ const PianoRollCell: FC<PianoRollCellProps> = memo(
             }
         };
 
-        const getNoteBackground = () => {
-            if (!scaleNoteIndex) return "tonic";
-            if (scaleNoteIndex === 2 || scaleNoteIndex === 5) return "low";
-            if (scaleNoteIndex === 1 || scaleNoteIndex === 3) return "mid";
-            if (scaleNoteIndex === 4 || scaleNoteIndex === 6) return "high";
-            return "lightcoral";
-        };
-
         const getBackground = (hover: boolean) => {
             if (active || hover) {
-                return getNoteBackground();
+                return getNote(mode, scaleNoteIndex).color;
             }
 
             const stepInBar = stepIndex % notesPerBar;

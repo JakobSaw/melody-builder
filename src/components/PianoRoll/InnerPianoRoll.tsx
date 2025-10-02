@@ -2,7 +2,7 @@ import { Box, Grid, Flex, Text } from "@chakra-ui/react";
 import type { InnerPianoRollProps } from "@/types";
 import { useMainContext } from "@/context/useMainContext";
 import PianoRollCell from "./PianoRollCell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useColorMode } from "../ui/color-mode";
 
@@ -13,6 +13,7 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
     grid,
     setGrid,
     isPlaying,
+    isScrolling,
 }) => {
     const {
         pianoRoll,
@@ -34,6 +35,12 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
         note: string;
     }) => {
         const [showX, setShowX] = useState<boolean>(false);
+        useEffect(() => {
+            if (isScrolling && showX) {
+                setShowX(false);
+            }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [isScrolling]);
         return (
             <Flex
                 align="center"

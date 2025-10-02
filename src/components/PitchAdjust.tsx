@@ -7,13 +7,13 @@ const PitchAdjust = () => {
     const { pitch, setPitch, color, colorHover } = useMainContext();
     return (
         <Box>
-            <Heading as="h3" size="2xl" userSelect="none" mb={2}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Chords Pitch
             </Heading>
             <Flex gap={4} align="center">
                 <Box
                     cursor="pointer"
-                    p="4"
+                    p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
                     onClick={() =>
@@ -24,16 +24,16 @@ const PitchAdjust = () => {
                 </Box>
                 <Heading
                     as="h3"
-                    size="2xl"
+                    size="xl"
                     userSelect="none"
-                    width="40px"
+                    width="30px"
                     textAlign="center"
                 >
                     {pitch}
                 </Heading>
                 <Box
                     cursor="pointer"
-                    p="4"
+                    p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
                     onClick={() =>

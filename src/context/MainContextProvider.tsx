@@ -37,7 +37,7 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
     const [isMetronomeOn, setIsMetronomeOn] = useState<boolean>(false);
     const [pianoRoll, setPianoRoll] = useState<string[]>([]);
     const [soundsAreLoading, setSoundsAreLoading] = useState<boolean>(false);
-    const [noteCellSize, setNoteCellSize] = useState<number>(40);
+    const [noteCellSize, setNoteCellSize] = useState<number>(30);
     const [melodies, setMelodies] = useState<Melody[]>([]);
     const [uploading, setUploading] = useState<boolean>(false);
     const [isPlayingGlobal, setIsPlayingGlobal] = useState<boolean>(false);

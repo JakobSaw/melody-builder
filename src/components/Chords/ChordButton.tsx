@@ -1,6 +1,6 @@
 import { useMainContext } from "@/context/useMainContext";
 import type { ChordButtonProps } from "@/types";
-import { getChord, getColor, getNote } from "@/utils";
+import { getChord, getNote } from "@/utils";
 import { Flex, Heading } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -55,7 +55,7 @@ const ChordButton: React.FC<ChordButtonProps> = ({ chord, index }) => {
             direction="column"
             gap="2"
             borderWidth="4px"
-            borderColor={getColor(index)}
+            borderColor={getNote(mode, index).color}
             boxShadow={isActive ? `0 0 10px 2px ${color}` : "none"}
             bg={isActive ? colorHover : "none"}
             transition="all 0.2s"
@@ -69,7 +69,7 @@ const ChordButton: React.FC<ChordButtonProps> = ({ chord, index }) => {
                 {chord}
             </Heading>
             <Heading as="h1" size="4xl" userSelect="none">
-                {getNote(mode, index)}
+                {getNote(mode, index).note}
             </Heading>
         </Flex>
     );

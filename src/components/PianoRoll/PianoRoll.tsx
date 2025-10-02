@@ -27,6 +27,7 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
         melody.numberOfBarsInMelody
     );
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const [isScrolling, setIsScrolling] = useState<boolean>(false);
 
     const numberOfNotesInMelody = notesPerBar * numberOfBarsInMelody;
 
@@ -51,9 +52,24 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
         verticalRef.current.scrollTop = scrollTop;
         horizontalRef.current.scrollLeft = mainRef.current.scrollLeft;
     };
-    const syncVerticalScroll = () => {
+    const syncHorizontalScroll = () => {
         if (!mainRef.current || !horizontalRef.current) return;
         mainRef.current.scrollLeft = horizontalRef.current.scrollLeft;
+    };
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const syncVerticalScroll = () => {
+        if (!mainRef.current || !verticalRef.current) return;
+        mainRef.current.scrollTop = verticalRef.current.scrollTop;
+        if (!isPlaying) {
+            setIsScrolling(true);
+
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                setIsScrolling(false);
+            }, 150);
+        }
     };
 
     const updateMelody = (updates: PartialMelody) => {
@@ -101,14 +117,18 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
     useEffect(() => {
         const main = mainRef.current;
         const horizontal = horizontalRef.current;
-        if (!main || !horizontal) return;
+        const vertical = verticalRef.current;
+        if (!main || !horizontal || !vertical) return;
 
-        horizontal.addEventListener("scroll", syncVerticalScroll);
+        horizontal.addEventListener("scroll", syncHorizontalScroll);
+        vertical.addEventListener("scroll", syncVerticalScroll);
         main.addEventListener("scroll", syncScroll);
         return () => {
-            horizontal.removeEventListener("scroll", syncVerticalScroll);
+            horizontal.removeEventListener("scroll", syncHorizontalScroll);
+            vertical.removeEventListener("scroll", syncVerticalScroll);
             main.removeEventListener("scroll", syncScroll);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -155,6 +175,7 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
                 grid={grid}
                 setGrid={setGrid}
                 isPlaying={isPlaying}
+                isScrolling={isScrolling}
             />
             <ChordTimeline
                 chordTimeline={chordTimeline}

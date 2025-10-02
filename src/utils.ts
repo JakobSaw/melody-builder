@@ -1,30 +1,83 @@
 import { enharmonic } from "@tonaljs/note";
 
-const getColor = (index: number) => {
-    if (index === 1 || index === 3) return "mid";
-    if (index === 2 || index === 5) return "low";
-    if (index === 4 || index === 6) return "high";
-    return "tonic";
-};
 const getNote = (mode: "Minor" | "Major", index: number) => {
     if (mode === "Minor") {
-        if (index === 0) return "i";
-        if (index === 1) return "ii°";
-        if (index === 2) return "III";
-        if (index === 3) return "iv";
-        if (index === 4) return "v";
-        if (index === 5) return "VI";
-        if (index === 6) return "VII";
-    } else {
-        if (index === 0) return "I";
-        if (index === 1) return "ii";
-        if (index === 2) return "iii";
-        if (index === 3) return "IV";
-        if (index === 4) return "V";
-        if (index === 5) return "vi";
-        if (index === 6) return "vii°";
+        if (index === 0)
+            return {
+                note: "i",
+                color: "tonic",
+            };
+        if (index === 1)
+            return {
+                note: "ii°",
+                color: "mid",
+            };
+        if (index === 2)
+            return {
+                note: "III",
+                color: "low",
+            };
+        if (index === 3)
+            return {
+                note: "iv",
+                color: "mid",
+            };
+        if (index === 4)
+            return {
+                note: "v",
+                color: "high",
+            };
+        if (index === 5)
+            return {
+                note: "VI",
+                color: "low",
+            };
+        if (index === 6)
+            return {
+                note: "VII",
+                color: "high",
+            };
     }
-    return "";
+    if (index === 0)
+        return {
+            note: "I",
+            color: "tonic",
+        };
+    if (index === 1)
+        return {
+            note: "ii",
+            color: "mid",
+        };
+    if (index === 2)
+        return {
+            note: "iii",
+            color: "low",
+        };
+    if (index === 3)
+        return {
+            note: "IV",
+            color: "high",
+        };
+    if (index === 4)
+        return {
+            note: "V",
+            color: "low",
+        };
+    if (index === 5)
+        return {
+            note: "vi",
+            color: "mid",
+        };
+    if (index === 6)
+        return {
+            note: "vii°",
+            color: "high",
+        };
+
+    return {
+        note: "",
+        color: "transparent",
+    };
 };
 
 const getChord = (
@@ -60,4 +113,4 @@ const getChord = (
     return `${setChord}${setPitch}`;
 };
 
-export { getColor, getNote, getChord };
+export { getChord, getNote };

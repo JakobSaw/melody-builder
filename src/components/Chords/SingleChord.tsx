@@ -1,6 +1,6 @@
 import { useMainContext } from "@/context/useMainContext";
 import type { SingleChordProps } from "@/types";
-import { getColor } from "@/utils";
+import { getNote } from "@/utils";
 import { NativeSelect } from "@chakra-ui/react";
 
 const SingleChord: React.FC<SingleChordProps> = ({
@@ -8,7 +8,7 @@ const SingleChord: React.FC<SingleChordProps> = ({
     chordTimeline,
     setChordTimeline,
 }) => {
-    const { scaleChords, color, colorHover } = useMainContext();
+    const { scaleChords, color, colorHover, mode } = useMainContext();
     const chord = chordTimeline[step];
 
     const changeChord = (chord: string, step: number) => {
@@ -26,13 +26,15 @@ const SingleChord: React.FC<SingleChordProps> = ({
             <NativeSelect.Field
                 value={chord}
                 onChange={(e) => changeChord(e.target.value, step)}
-                fontSize="2xl"
+                fontSize="xl"
                 w="auto"
                 px={4}
                 border={`2px solid ${color}`}
                 color={color}
                 bg={
-                    chord ? getColor(scaleChords.indexOf(chord)) : "transparent"
+                    chord
+                        ? getNote(mode, scaleChords.indexOf(chord)).color
+                        : "transparent"
                 }
                 _hover={chord ? {} : { bg: colorHover }}
                 cursor="pointer"
