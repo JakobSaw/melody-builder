@@ -13,14 +13,7 @@ const ChordButton: React.FC<ChordButtonProps> = ({ chord, index }) => {
         if (dim) return;
         setIsActive(true);
         setTimeout(() => setIsActive(false), 300);
-        const filePath = getChord(
-            chord,
-            index,
-            pitch,
-            keyValue,
-            scaleNotes,
-            true
-        );
+        const filePath = getChord(chord, index, pitch, keyValue, scaleNotes);
         const audio = new Audio(filePath);
         audio.play().catch((err) => {
             console.error("Audio play failed:", err);

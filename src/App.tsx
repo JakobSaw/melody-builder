@@ -31,7 +31,6 @@ const App = () => {
                     w="full"
                     maxW={`${pianoRollMaxWidth}px`}
                     gap="10"
-                    overflow={"hidden"}
                 >
                     <KeySelector />
                     <ModeSelector />

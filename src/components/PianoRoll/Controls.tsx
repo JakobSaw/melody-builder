@@ -5,7 +5,6 @@ import { useMainContext } from "@/context/useMainContext";
 
 const scheduleAheadTime = 0.1;
 const pianoGain = 1.5;
-const pianoRatio = 1.5;
 
 const Controls: React.FC<ControlsProps> = ({
     clearGrid,
@@ -58,7 +57,7 @@ const Controls: React.FC<ControlsProps> = ({
         if (!chordTimelineRef.current[step]) return;
         const timeLineChord = `${chordTimelineRef.current[step]}${pitchRef.current}`;
         if (!timeLineChord || !audioCtxRef.current) return;
-        const buffer = chordBuffers[timeLineChord.replace("#", "sharp")];
+        const buffer = chordBuffers[timeLineChord.replace("#", "s")];
         scheduleBufferAtTime(buffer, time, pianoGain);
     };
     const advanceStep = () => {
@@ -85,7 +84,7 @@ const Controls: React.FC<ControlsProps> = ({
 
             if (step % 4 === 0 && isMetronomeOn && metronomeBuffer) {
                 const isFullBeat = step % notesPerBar === 0;
-                const gain = isFullBeat ? pianoGain : pianoGain / pianoRatio;
+                const gain = isFullBeat ? pianoGain : pianoGain / 2;
                 scheduleBufferAtTime(metronomeBuffer, stepTime, gain);
             }
 
@@ -94,7 +93,7 @@ const Controls: React.FC<ControlsProps> = ({
                     scheduleBufferAtTime(
                         noteBuffers[pianoRoll[row]],
                         stepTime,
-                        pianoGain / pianoRatio
+                        pianoGain
                     );
                 }
             }
@@ -138,10 +137,8 @@ const Controls: React.FC<ControlsProps> = ({
         if (schedulerIdRef.current) {
             cancelAnimationFrame(schedulerIdRef.current);
             schedulerIdRef.current = null;
-            setTimeout(() => {
-                removeHighlightedClass();
-                setIsPlaying(false);
-            }, 50);
+            removeHighlightedClass();
+            setIsPlaying(false);
         }
     };
     return (

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import MainContext from "./MainContext";
 import { get } from "@tonaljs/scale";
 import { simplify } from "@tonaljs/note";
-import sharpNotes from "../notes/sharpNotes.json";
 import type { Melody } from "@/types";
 import { useColorModeValue } from "@/components/ui/color-mode";
+import { enharmonic } from "@tonaljs/note";
 
 const notesPerBar = 16;
 const noteCellRatio = 1.25;
@@ -46,11 +46,21 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
     const color = useColorModeValue("#18181b", "white");
     const colorHover = useColorModeValue("#EEEEEE", "#333333");
 
+    const isEmpty = (obj: Record<string, AudioBuffer>) =>
+        obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+
     useEffect(() => {
         const scaleName = `${keyValue} ${mode}`;
         const scale = get(scaleName);
         const notes = scale.notes;
-        const simplifiedNotes = notes.map((n) => simplify(n));
+        let simplifiedNotes = notes.map((n) => simplify(n));
+        if (
+            simplifiedNotes.some((simplifiedNote) =>
+                simplifiedNote.includes("b")
+            )
+        ) {
+            simplifiedNotes = notes.map((n) => enharmonic(n));
+        }
         const chords = simplifiedNotes.map((note, i) => {
             const chordType =
                 mode === "Major"
@@ -100,79 +110,93 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
         Record<string, AudioBuffer>
     >({});
 
-    // Scheduler Functions
+    // load Samples
+    const loadChordSample = async (chordName: string) => {
+        const res = await fetch(`/samples/chords/${chordName}.mp3`);
+        const buf = await res.arrayBuffer();
+        return audioCtxRef.current!.decodeAudioData(buf);
+    };
 
-    useEffect(() => {
-        audioCtxRef.current = new AudioContext();
-
-        const loadMetronome = async () => {
-            const res = await fetch(`/samples/metronome.mp3`);
-            const buf = await res.arrayBuffer();
-            const decoded = await audioCtxRef.current!.decodeAudioData(buf);
-            setMetronomeBuffer(decoded);
-        };
-
-        const loadPianoSample = async (note: string) => {
-            const res = await fetch(`/samples/single/${note}.mp3`);
-            const buf = await res.arrayBuffer();
-            return audioCtxRef.current!.decodeAudioData(buf);
-        };
-
-        const loadChordSample = async (chordName: string) => {
-            const res = await fetch(`/samples/chords/${chordName}.mp3`);
-            const buf = await res.arrayBuffer();
-            return audioCtxRef.current!.decodeAudioData(buf);
-        };
-
-        const loadAllSamples = async () => {
-            setSoundsAreLoading(true);
-            const getAllNotes = [];
-            for (let index = 0; index < pianoRollLength; index++) {
-                for (
-                    let innerIndex = 0;
-                    innerIndex < sharpNotes.length;
-                    innerIndex++
-                ) {
-                    const getNote = sharpNotes[innerIndex];
-                    getAllNotes.push(`${getNote}${index + 1}`);
-                }
+    const checkChords = async () => {
+        let chordResult: Record<string, AudioBuffer> = {};
+        if (!isEmpty(chordBuffers)) {
+            chordResult = {
+                ...chordBuffers,
+            };
+        }
+        for (const chord of scaleChords) {
+            const dim = chord.includes("°");
+            const chordWithPitch = `${chord.replace("#", "s")}${pitch}`;
+            if (!dim && !(chord in chordBuffers)) {
+                chordResult[chordWithPitch] = await loadChordSample(
+                    chordWithPitch
+                );
             }
-            const getAllChords = [];
-            for (let index = 0; index < 4; index++) {
-                for (
-                    let innerIndex = 0;
-                    innerIndex < sharpNotes.length;
-                    innerIndex++
-                ) {
-                    const getNote = sharpNotes[innerIndex].replace(
-                        "s",
-                        "sharp"
-                    );
-                    getAllChords.push(`${getNote}${index}`);
-                    getAllChords.push(`${getNote}-${index}`);
+        }
+        setChordBuffers(chordResult);
+        return;
+    };
+
+    const loadMetronome = async () => {
+        const res = await fetch(`/samples/metronome.mp3`);
+        const buf = await res.arrayBuffer();
+        const decoded = await audioCtxRef.current!.decodeAudioData(buf);
+        setMetronomeBuffer(decoded);
+    };
+
+    const loadPianoSample = async (note: string) => {
+        const res = await fetch(`/samples/single/${note}.mp3`);
+        const buf = await res.arrayBuffer();
+        return audioCtxRef.current!.decodeAudioData(buf);
+    };
+
+    const loadSamples = async (skipNotes: boolean) => {
+        setSoundsAreLoading(true);
+        try {
+            if (!skipNotes) {
+                let result: Record<string, AudioBuffer> = {};
+                if (!isEmpty(noteBuffers)) {
+                    result = {
+                        ...noteBuffers,
+                    };
                 }
-            }
-            try {
-                const result: Record<string, AudioBuffer> = {};
-                for (const note of getAllNotes) {
-                    result[note] = await loadPianoSample(note);
+                for (const note of pianoRoll) {
+                    if (!(note in noteBuffers)) {
+                        result[note] = await loadPianoSample(note);
+                    }
                 }
                 setNoteBuffers(result);
-                const chordResult: Record<string, AudioBuffer> = {};
-                for (const note of getAllChords) {
-                    chordResult[note] = await loadChordSample(note);
-                }
-                setChordBuffers(chordResult);
-                await loadMetronome();
-            } catch (err) {
-                console.error("error loading sample", err);
-            } finally {
-                setSoundsAreLoading(false);
             }
-        };
+            await checkChords();
+        } catch (err) {
+            console.error("error loading sample", err);
+        } finally {
+            setSoundsAreLoading(false);
+        }
+    };
 
-        loadAllSamples();
-    }, []);
+    useEffect(() => {
+        if (!scaleChords.length || !pianoRoll.length) return;
+
+        if (!audioCtxRef.current) {
+            audioCtxRef.current = new AudioContext();
+        }
+
+        if (!metronomeBuffer) {
+            loadMetronome();
+        }
+
+        loadSamples(false);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scaleChords]);
+
+    useEffect(() => {
+        if (!scaleChords.length || !pianoRoll.length || isEmpty(chordBuffers))
+            return;
+        loadSamples(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pitch]);
 
     return (
         <MainContext.Provider

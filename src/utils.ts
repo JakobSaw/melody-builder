@@ -1,5 +1,3 @@
-import { enharmonic } from "@tonaljs/note";
-
 const getNote = (mode: "Minor" | "Major", index: number) => {
     if (mode === "Minor") {
         if (index === 0)
@@ -85,16 +83,8 @@ const getChord = (
     index: number | null,
     pitch: number,
     keyValue: string,
-    scaleNotes: string[],
-    filePath: boolean
+    scaleNotes: string[]
 ) => {
-    let setChord;
-    if (chord.includes("b")) {
-        setChord = enharmonic(chord);
-        setChord = setChord.replace("#", "sharp");
-    } else {
-        setChord = chord.replace("#", "sharp");
-    }
     let setPitch = pitch.toString();
     if (keyValue !== "C") {
         let findRootIndex = 0;
@@ -107,10 +97,7 @@ const getChord = (
             setPitch = (pitch + 1).toString();
         }
     }
-    if (filePath) {
-        return `/samples/chords/${setChord}${setPitch}.mp3`;
-    }
-    return `${setChord}${setPitch}`;
+    return `/samples/chords/${chord.replace("#", "s")}${setPitch}.mp3`;
 };
 
 export { getChord, getNote };
