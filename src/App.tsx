@@ -11,6 +11,7 @@ import { useMainContext } from "./context/useMainContext";
 import MetronomeControl from "./components/PianoRoll/MetronomeControl";
 import NoteCellSizer from "./components/NoteCellSizer";
 import ColorModeToggle from "./components/ColorModeToggle";
+import ChordTypeSelector from "./components/ChordTypeSelector";
 
 const App = () => {
     const { pianoRollMaxWidth } = useMainContext();
@@ -35,6 +36,7 @@ const App = () => {
                     <KeySelector />
                     <ModeSelector />
                     <TempoAdjust />
+                    <ChordTypeSelector />
                     <PitchAdjust />
                     <Chords />
                     <Melodies />

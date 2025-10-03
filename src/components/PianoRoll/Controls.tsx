@@ -7,7 +7,7 @@ const scheduleAheadTime = 0.1;
 const pianoGain = 1.5;
 
 const Controls: React.FC<ControlsProps> = ({
-    clearGrid,
+    clearNotes,
     deleteMelody,
     grid,
     chordTimeline,
@@ -151,8 +151,8 @@ const Controls: React.FC<ControlsProps> = ({
             >
                 {isPlaying ? "Stop" : "Start"}
             </Button>
-            <Button size="md" variant="outline" onClick={clearGrid}>
-                Clear
+            <Button size="md" variant="outline" onClick={clearNotes}>
+                Clear Notes
             </Button>
             <Button size="md" variant="outline" onClick={deleteMelody}>
                 Delete Melody

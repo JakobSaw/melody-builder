@@ -14,6 +14,7 @@ const PianoRollCell: FC<PianoRollCellProps> = memo(
             audioCtxRef,
             noteBuffers,
             mode,
+            chordType,
         } = useMainContext();
 
         const { colorMode } = useColorMode();
@@ -58,7 +59,7 @@ const PianoRollCell: FC<PianoRollCellProps> = memo(
 
         const getBackground = (hover: boolean) => {
             if (active || hover) {
-                return getNote(mode, scaleNoteIndex).color;
+                return getNote(mode, chordType, scaleNoteIndex).color;
             }
 
             const stepInBar = stepIndex % notesPerBar;

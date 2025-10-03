@@ -8,7 +8,8 @@ const SingleChord: React.FC<SingleChordProps> = ({
     chordTimeline,
     setChordTimeline,
 }) => {
-    const { scaleChords, color, colorHover, mode } = useMainContext();
+    const { scaleChords, color, colorHover, mode, chordType } =
+        useMainContext();
     const chord = chordTimeline[step];
 
     const changeChord = (chord: string, step: number) => {
@@ -33,7 +34,8 @@ const SingleChord: React.FC<SingleChordProps> = ({
                 color={color}
                 bg={
                     chord
-                        ? getNote(mode, scaleChords.indexOf(chord)).color
+                        ? getNote(mode, chordType, scaleChords.indexOf(chord))
+                              .color
                         : "transparent"
                 }
                 _hover={chord ? {} : { bg: colorHover }}

@@ -4,7 +4,8 @@ import { Box, Flex, Heading } from "@chakra-ui/react";
 import { Plus, Minus } from "lucide-react";
 
 const PitchAdjust = () => {
-    const { pitch, setPitch, color, colorHover } = useMainContext();
+    const { pitch, setPitch, color, colorHover, isPlayingGlobal } =
+        useMainContext();
     return (
         <Box>
             <Heading as="h3" size="xl" userSelect="none" mb={2}>
@@ -12,13 +13,14 @@ const PitchAdjust = () => {
             </Heading>
             <Flex gap={4} align="center">
                 <Box
-                    cursor="pointer"
+                    cursor={isPlayingGlobal ? "disabled" : "pointer"}
                     p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
-                    onClick={() =>
-                        setPitch((prev: number) => Math.max(0, prev - 1))
-                    }
+                    onClick={() => {
+                        if (isPlayingGlobal) return;
+                        setPitch((prev: number) => Math.max(0, prev - 1));
+                    }}
                 >
                     <Minus />
                 </Box>
@@ -32,13 +34,14 @@ const PitchAdjust = () => {
                     {pitch}
                 </Heading>
                 <Box
-                    cursor="pointer"
+                    cursor={isPlayingGlobal ? "disabled" : "pointer"}
                     p="2"
                     border={`2px solid ${color}`}
                     _hover={{ bg: colorHover }}
-                    onClick={() =>
-                        setPitch((prev: number) => Math.min(2, prev + 1))
-                    }
+                    onClick={() => {
+                        if (isPlayingGlobal) return;
+                        setPitch((prev: number) => Math.min(2, prev + 1));
+                    }}
                 >
                     <Plus />
                 </Box>

@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import MainContext from "./MainContext";
 import { get } from "@tonaljs/scale";
 import { simplify } from "@tonaljs/note";
-import type { Melody } from "@/types";
+import type { ChordTypes, Melody } from "@/types";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { enharmonic } from "@tonaljs/note";
+import { createPianoRoll, getChordFilePath, getNote, isEmpty } from "@/utils";
 
 const notesPerBar = 16;
 const noteCellRatio = 1.25;
@@ -41,62 +42,29 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
     const [melodies, setMelodies] = useState<Melody[]>([]);
     const [uploading, setUploading] = useState<boolean>(false);
     const [isPlayingGlobal, setIsPlayingGlobal] = useState<boolean>(false);
+    const [chordType, setChordType] = useState<ChordTypes>("Triad");
 
     // const result = useColorModeValue("<light-mode-value>", "<dark-mode-value>")
     const color = useColorModeValue("#18181b", "white");
     const colorHover = useColorModeValue("#EEEEEE", "#333333");
 
-    const isEmpty = (obj: Record<string, AudioBuffer>) =>
-        obj && Object.keys(obj).length === 0 && obj.constructor === Object;
-
     useEffect(() => {
         const scaleName = `${keyValue} ${mode}`;
         const scale = get(scaleName);
-        const notes = scale.notes;
-        let simplifiedNotes = notes.map((n) => simplify(n));
-        if (
-            simplifiedNotes.some((simplifiedNote) =>
-                simplifiedNote.includes("b")
-            )
-        ) {
-            simplifiedNotes = notes.map((n) => enharmonic(n));
+        let notes = scale.notes;
+        notes = notes.map((n) => simplify(n));
+        if (notes.some((note) => note.includes("b"))) {
+            notes = notes.map((n) => enharmonic(n));
         }
-        const chords = simplifiedNotes.map((note, i) => {
-            const chordType =
-                mode === "Major"
-                    ? ["", "-", "-", "", "", "-", "°"][i]
-                    : ["-", "°", "", "-", "-", "", ""][i];
-            return `${note}${chordType}`;
+        const chords = notes.map((note, i) => {
+            const simplifiedChordType = getNote(mode, chordType, i).chord;
+            return `${note}${simplifiedChordType}`;
         });
-        const getPianoRoll = [];
-        for (let index = 0; index < pianoRollLength; index++) {
-            for (
-                let innerIndex = 0;
-                innerIndex < simplifiedNotes.length;
-                innerIndex++
-            ) {
-                let setPitch = `${index + 1}`;
-                if (keyValue !== "C") {
-                    let findRootIndex = 0;
-                    if (simplifiedNotes.includes("C")) {
-                        findRootIndex = simplifiedNotes.indexOf("C");
-                    } else if (simplifiedNotes.includes("C#")) {
-                        findRootIndex = simplifiedNotes.indexOf("C#");
-                    }
-                    if (innerIndex && innerIndex >= findRootIndex) {
-                        setPitch = `${index + 2}`;
-                    }
-                }
-                const getNote = simplifiedNotes[innerIndex].replace("#", "s");
-                if (index + 2 < 6) {
-                    getPianoRoll.push(`${getNote}${setPitch}`);
-                }
-            }
-        }
-        setPianoRoll(getPianoRoll.reverse());
-        setScaleNotes(simplifiedNotes);
+        const getPianoRoll = createPianoRoll(notes, pianoRollLength, keyValue);
+        setPianoRoll(getPianoRoll);
+        setScaleNotes(notes);
         setScaleChords(chords);
-    }, [keyValue, mode]);
+    }, [keyValue, mode, chordType]);
 
     // Buffers
     const audioCtxRef = useRef<AudioContext | null>(null);
@@ -111,8 +79,8 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
     >({});
 
     // load Samples
-    const loadChordSample = async (chordName: string) => {
-        const res = await fetch(`/samples/chords/${chordName}.mp3`);
+    const loadChordSample = async (filePath: string) => {
+        const res = await fetch(filePath);
         const buf = await res.arrayBuffer();
         return audioCtxRef.current!.decodeAudioData(buf);
     };
@@ -125,12 +93,18 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
             };
         }
         for (const chord of scaleChords) {
-            const dim = chord.includes("°");
-            const chordWithPitch = `${chord.replace("#", "s")}${pitch}`;
-            if (!dim && !(chord in chordBuffers)) {
-                chordResult[chordWithPitch] = await loadChordSample(
-                    chordWithPitch
-                );
+            const findIndex = scaleChords.indexOf(chord);
+            const chordPath = getChordFilePath(
+                chord,
+                findIndex,
+                pitch,
+                keyValue,
+                scaleNotes,
+                chordType
+            );
+            const chordWithPitch = `${chord}${pitch}`;
+            if (!(chordWithPitch in chordBuffers)) {
+                chordResult[chordWithPitch] = await loadChordSample(chordPath);
             }
         }
         setChordBuffers(chordResult);
@@ -145,7 +119,7 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const loadPianoSample = async (note: string) => {
-        const res = await fetch(`/samples/single/${note}.mp3`);
+        const res = await fetch(`/samples/notes/${note}.mp3`);
         const buf = await res.arrayBuffer();
         return audioCtxRef.current!.decodeAudioData(buf);
     };
@@ -235,6 +209,8 @@ export const MainProvider = ({ children }: { children: ReactNode }) => {
                 setIsPlayingGlobal,
                 color,
                 colorHover,
+                chordType,
+                setChordType,
             }}
         >
             {children}

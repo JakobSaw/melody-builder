@@ -35,12 +35,16 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
     const verticalRef = useRef<HTMLDivElement>(null);
     const horizontalRef = useRef<HTMLDivElement>(null);
 
-    const clearGrid = () => {
+    const clearNotes = () => {
         const emptyGrid: NoteGrid = Array.from(
             { length: pianoRoll.length },
             () => Array(numberOfNotesInMelody).fill(false)
         );
         setGrid(emptyGrid);
+    };
+
+    const clearGrid = () => {
+        clearNotes();
         const emptyChordTimeLine = Array(numberOfNotesInMelody).fill("");
         setChordTimeline(emptyChordTimeLine);
     };
@@ -184,7 +188,7 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
                 numberOfNotesInMelody={numberOfNotesInMelody}
             />
             <Controls
-                clearGrid={clearGrid}
+                clearNotes={clearNotes}
                 deleteMelody={deleteMelody}
                 grid={grid}
                 chordTimeline={chordTimeline}

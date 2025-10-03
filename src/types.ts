@@ -2,6 +2,7 @@ import type { SystemStyleObject } from "@chakra-ui/react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 
 type NoteGrid = boolean[][];
+type ChordTypes = "Triad" | "7th";
 
 type Melody = {
     id: string;
@@ -45,6 +46,8 @@ interface MainContextProps {
     setIsPlayingGlobal: (isPlayingGlobal: boolean) => void;
     color: string;
     colorHover: string;
+    chordType: ChordTypes;
+    setChordType: (chordType: ChordTypes) => void;
 }
 
 interface ChordTimelineProps {
@@ -89,7 +92,7 @@ interface PianoRollCellProps {
 }
 
 interface ControlsProps {
-    clearGrid: () => void;
+    clearNotes: () => void;
     deleteMelody: () => void;
     grid: NoteGrid;
     chordTimeline: string[];
@@ -116,4 +119,5 @@ export type {
     ChordTimelineProps,
     InnerPianoRollProps,
     Melody,
+    ChordTypes,
 };
