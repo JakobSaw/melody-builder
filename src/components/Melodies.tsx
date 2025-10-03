@@ -73,7 +73,7 @@ const Melodies = () => {
                     <Box />
                 )}
             </Flex>
-            {melodies.length > 0 && (
+            {melodies.length > 0 && !soundsAreLoading && (
                 <>
                     {melodies.map((melody) => (
                         <PianoRoll
