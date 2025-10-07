@@ -1,7 +1,8 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, Spinner } from "@chakra-ui/react";
 import type { ControlsProps, NoteGrid } from "@/types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMainContext } from "@/context/useMainContext";
+import RandomizerSelector from "./RandomizerSelector";
 
 const scheduleAheadTime = 0.1;
 const pianoGain = 1.5;
@@ -14,6 +15,10 @@ const Controls: React.FC<ControlsProps> = ({
     numberOfNotesInMelody,
     isPlaying,
     setIsPlaying,
+    randomizeNotes,
+    randomizeChords,
+    randomizeLevel,
+    setRandomizeLevel,
 }) => {
     const {
         pianoRoll,
@@ -32,6 +37,11 @@ const Controls: React.FC<ControlsProps> = ({
     const chordTimelineRef = useRef<string[]>([]);
     const pitchRef = useRef<number>(1);
     const gridRef = useRef<NoteGrid>(grid);
+
+    const randomizeButtons = ["notes", "chords"];
+
+    const [deactivateRandomiozeButtons, setDeactivateRandomiozeButtons] =
+        useState<string>("");
 
     const removeHighlightedClass = () => {
         const prevCells = document.querySelectorAll(
@@ -57,7 +67,7 @@ const Controls: React.FC<ControlsProps> = ({
         if (!chordTimelineRef.current[step]) return;
         const timeLineChord = `${chordTimelineRef.current[step]}${pitchRef.current}`;
         if (!timeLineChord || !audioCtxRef.current) return;
-        const buffer = chordBuffers[timeLineChord.replace("#", "s")];
+        const buffer = chordBuffers[timeLineChord];
         scheduleBufferAtTime(buffer, time, pianoGain);
     };
     const advanceStep = () => {
@@ -141,8 +151,23 @@ const Controls: React.FC<ControlsProps> = ({
             setIsPlaying(false);
         }
     };
+
+    const randomizerClicked = (notes: boolean) => {
+        setTimeout(() => {
+            if (notes) {
+                randomizeNotes();
+            } else {
+                randomizeChords();
+            }
+        }, 1000);
+        setDeactivateRandomiozeButtons(notes ? "notes" : "chords");
+        setTimeout(() => {
+            setDeactivateRandomiozeButtons("");
+        }, 2000);
+    };
+
     return (
-        <Flex mt={10} gap={4}>
+        <Flex mt={10} gap={4} align={"center"}>
             <Button
                 variant="solid"
                 size="md"
@@ -154,9 +179,39 @@ const Controls: React.FC<ControlsProps> = ({
             <Button size="md" variant="outline" onClick={clearNotes}>
                 Clear Notes
             </Button>
-            <Button size="md" variant="outline" onClick={deleteMelody}>
+            <Button
+                size="md"
+                variant="outline"
+                onClick={deleteMelody}
+                disabled={isPlaying}
+            >
                 Delete Melody
             </Button>
+            {randomizeButtons.map((randomizeButton) => (
+                <Button
+                    key={randomizeButton}
+                    minW={"210px"}
+                    size="md"
+                    variant="outline"
+                    onClick={() =>
+                        randomizerClicked(randomizeButton === "notes")
+                    }
+                    disabled={deactivateRandomiozeButtons === randomizeButton}
+                >
+                    {deactivateRandomiozeButtons === randomizeButton ? (
+                        <Spinner size={"xs"} />
+                    ) : randomizeButton === "notes" ? (
+                        "🌈 Randomize Notes 🎶"
+                    ) : (
+                        "🌈 Randomize Chords 🎹"
+                    )}
+                </Button>
+            ))}
+            <RandomizerSelector
+                randomizeLevel={randomizeLevel}
+                setRandomizeLevel={setRandomizeLevel}
+                deactivateRandomiozeButtons={deactivateRandomiozeButtons}
+            />
         </Flex>
     );
 };

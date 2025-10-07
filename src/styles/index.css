@@ -19,3 +19,10 @@ html.dark .piano-roll-cell.highlighted {
 html.light .piano-roll-cell.highlighted {
     filter: brightness(0.75);
 }
+
+#chordtimeline .chakra-native-select__field {
+    padding: 0 !important;
+    border: 1px solid #333333 !important;
+    width: 100% !important;
+    text-align: center !important;
+}

@@ -68,6 +68,12 @@ interface SingleChordProps {
     setChordTimeline: (chordTimeline: string[]) => void;
 }
 
+interface RandomizerSelectorProps {
+    randomizeLevel: number;
+    setRandomizeLevel: Dispatch<SetStateAction<number>>;
+    deactivateRandomiozeButtons: string;
+}
+
 interface PianoRollProps {
     deleteMelody: () => void;
     melody: Melody;
@@ -99,6 +105,10 @@ interface ControlsProps {
     numberOfNotesInMelody: number;
     isPlaying: boolean;
     setIsPlaying: Dispatch<SetStateAction<boolean>>;
+    randomizeNotes: () => void;
+    randomizeChords: () => void;
+    randomizeLevel: number;
+    setRandomizeLevel: Dispatch<SetStateAction<number>>;
 }
 
 interface BarCounterProps {
@@ -120,4 +130,5 @@ export type {
     InnerPianoRollProps,
     Melody,
     ChordTypes,
+    RandomizerSelectorProps,
 };

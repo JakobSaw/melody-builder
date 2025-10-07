@@ -86,6 +86,7 @@ const PianoRollCell: FC<PianoRollCellProps> = memo(
                         ? { border: "2px solid white" }
                         : { bg: getBackground(true) }
                 }
+                title={pianoRollNote}
             />
         );
     }

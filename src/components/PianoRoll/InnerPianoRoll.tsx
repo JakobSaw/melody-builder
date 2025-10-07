@@ -26,6 +26,7 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
     } = useMainContext();
 
     const { colorMode } = useColorMode();
+    const [hideXSideBar, setHideXSideBar] = useState<boolean>(false);
 
     const PianoRollAxis = ({
         keyDown,
@@ -41,6 +42,12 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
             }
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [isScrolling]);
+        useEffect(() => {
+            if (hideXSideBar) {
+                setShowX(false);
+            }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [hideXSideBar]);
         return (
             <Flex
                 align="center"
@@ -69,6 +76,14 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
         );
     };
 
+    useEffect(() => {
+        if (hideScrollBar) {
+            setTimeout(() => {
+                setHideXSideBar(false);
+            }, 500);
+        }
+    }, [hideScrollBar]);
+
     return (
         <Box pos={"relative"}>
             {/* SideBar with PianoRoll Notes */}
@@ -85,6 +100,9 @@ const InnerPianoRoll: React.FC<InnerPianoRollProps> = ({
                 overflow={"scroll"}
                 css={hideScrollBar}
                 ref={verticalRef}
+                onMouseLeave={() => {
+                    setHideXSideBar(true);
+                }}
             >
                 {pianoRoll.map((note, index) => (
                     <PianoRollAxis key={index} note={note} keyDown={index} />

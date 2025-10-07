@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import { useMainContext } from "@/context/useMainContext";
 
 const MetronomeControl = () => {
@@ -6,7 +6,10 @@ const MetronomeControl = () => {
         useMainContext();
 
     return (
-        <Flex mt={10} gap={4}>
+        <Box mt={10}>
+            <Heading as="h3" size="xl" userSelect="none" mb={2}>
+                Metronome Toggle
+            </Heading>
             <Button
                 variant="outline"
                 size="md"
@@ -15,7 +18,7 @@ const MetronomeControl = () => {
             >
                 Metronome: {isMetronomeOn ? "On" : "Off"}
             </Button>
-        </Flex>
+        </Box>
     );
 };
 

@@ -58,6 +58,7 @@ const ChordTimeline: React.FC<ChordTimelineProps> = ({
                 css={hideScrollBar}
             >
                 <Grid
+                    id="chordtimeline"
                     templateColumns={`repeat(${numberOfNotesInMelody}, ${
                         noteCellSize * noteCellRatio
                     }px)`}

@@ -7,7 +7,7 @@ import { Moon, Sun } from "lucide-react";
 const ColorModeToggle = () => {
     const { toggleColorMode, colorMode } = useColorMode();
     return (
-        <Box mb="100px">
+        <Box mt="10">
             <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Color Mode
             </Heading>

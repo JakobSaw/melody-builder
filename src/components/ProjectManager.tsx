@@ -75,7 +75,7 @@ const ProjectManager = () => {
     };
 
     return (
-        <Box my="100px">
+        <Box mt="10">
             <Heading as="h3" size="xl" userSelect="none" mb={2}>
                 Downloader & Uploader
             </Heading>

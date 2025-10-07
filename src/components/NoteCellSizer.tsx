@@ -7,7 +7,7 @@ const NoteCellSizer = () => {
     return (
         <Box mt={10}>
             <Heading as="h3" size="xl" userSelect="none" mb={2}>
-                PianoRoll Size
+                PianoRoll Size: {noteCellSize}px
             </Heading>
             <Slider.Root
                 width="200px"

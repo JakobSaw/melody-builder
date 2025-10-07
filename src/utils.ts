@@ -258,4 +258,19 @@ const createPianoRoll = (
     return getPianoRoll.reverse();
 };
 
-export { getChordFilePath, getNote, createPianoRoll, isEmpty };
+function getRandomBetween(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function isEven(n: number): boolean {
+    return n % 2 === 0;
+}
+
+export {
+    getChordFilePath,
+    getNote,
+    createPianoRoll,
+    isEmpty,
+    getRandomBetween,
+    isEven,
+};

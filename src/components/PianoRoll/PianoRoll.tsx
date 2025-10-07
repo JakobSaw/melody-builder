@@ -6,6 +6,7 @@ import BarCounter from "./BarCounter";
 import type { Melody, NoteGrid, PianoRollProps } from "@/types";
 import ChordTimeline from "../Chords/ChordTimeline";
 import InnerPianoRoll from "./InnerPianoRoll";
+import { getRandomBetween, isEven } from "@/utils";
 
 type PartialMelody = Partial<Melody>;
 
@@ -18,6 +19,7 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
         setMelodies,
         uploading,
         setIsPlayingGlobal,
+        scaleChords,
     } = useMainContext();
     const [grid, setGrid] = useState<NoteGrid>(melody.grid);
     const [chordTimeline, setChordTimeline] = useState<string[]>(
@@ -28,6 +30,7 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
     );
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [isScrolling, setIsScrolling] = useState<boolean>(false);
+    const [randomizeLevel, setRandomizeLevel] = useState<number>(1);
 
     const numberOfNotesInMelody = notesPerBar * numberOfBarsInMelody;
 
@@ -35,11 +38,12 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
     const verticalRef = useRef<HTMLDivElement>(null);
     const horizontalRef = useRef<HTMLDivElement>(null);
 
+    const emptyGrid: NoteGrid = Array.from({ length: pianoRoll.length }, () =>
+        Array(numberOfNotesInMelody).fill(false)
+    );
+    const emptyChordTimeLine = Array(numberOfNotesInMelody).fill("");
+
     const clearNotes = () => {
-        const emptyGrid: NoteGrid = Array.from(
-            { length: pianoRoll.length },
-            () => Array(numberOfNotesInMelody).fill(false)
-        );
         setGrid(emptyGrid);
     };
 
@@ -90,6 +94,71 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
         updatedMelodies[findIndex] = updatedMelody;
 
         setMelodies(updatedMelodies);
+    };
+
+    const randomizeNotes = () => {
+        const newGrid = [...emptyGrid];
+        const randomizeFactor = {
+            numberOfNotes: [0.4, 0.6, 0.8],
+            notesToPutNotesOnto: [
+                [7, 13],
+                [7, 20],
+                [3, 24],
+            ],
+        };
+        const index = randomizeLevel - 1;
+
+        const numberOfNotesToPutIntoTheGrid = Math.round(
+            numberOfNotesInMelody * randomizeFactor.numberOfNotes[index]
+        );
+
+        const getChanceOfEvery16thNote =
+            numberOfNotesToPutIntoTheGrid / numberOfNotesInMelody;
+
+        for (
+            let indexGrid = 0;
+            indexGrid < numberOfNotesInMelody;
+            indexGrid++
+        ) {
+            const shouldPlaceNote = Math.random() < getChanceOfEvery16thNote;
+            if (shouldPlaceNote) {
+                const chooseNote = getRandomBetween(
+                    randomizeFactor.notesToPutNotesOnto[index][0],
+                    randomizeFactor.notesToPutNotesOnto[index][1]
+                );
+                newGrid[chooseNote][indexGrid] = true;
+            }
+        }
+        setGrid(newGrid);
+    };
+    const randomizeChords = () => {
+        const newRandomizedChordTimeline = [...emptyChordTimeLine];
+        const randomizeFactor = {
+            numberOfChords: [0.7, 0.85, 1],
+        };
+        const index = randomizeLevel - 1;
+        const numberOfChordsToPutIntoTheGrid = Math.round(
+            numberOfNotesInMelody * randomizeFactor.numberOfChords[index]
+        );
+        const getChanceOfEvery16thNote =
+            numberOfChordsToPutIntoTheGrid / numberOfNotesInMelody;
+
+        for (
+            let indexGrid = 0;
+            indexGrid < numberOfNotesInMelody;
+            indexGrid++
+        ) {
+            const shouldPlaceNote = Math.random() < getChanceOfEvery16thNote;
+            if (shouldPlaceNote && isEven(indexGrid)) {
+                const chooseChord =
+                    scaleChords[getRandomBetween(0, scaleChords.length - 1)];
+                const dim = chooseChord.includes("°");
+                if (!dim) {
+                    newRandomizedChordTimeline[indexGrid] = chooseChord;
+                }
+            }
+        }
+        setChordTimeline(newRandomizedChordTimeline);
     };
 
     useEffect(() => {
@@ -195,6 +264,10 @@ const PianoRoll: FC<PianoRollProps> = ({ melody, deleteMelody }) => {
                 numberOfNotesInMelody={numberOfNotesInMelody}
                 isPlaying={isPlaying}
                 setIsPlaying={setIsPlaying}
+                randomizeNotes={randomizeNotes}
+                randomizeChords={randomizeChords}
+                randomizeLevel={randomizeLevel}
+                setRandomizeLevel={setRandomizeLevel}
             />
         </Box>
     );
